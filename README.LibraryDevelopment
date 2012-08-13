@@ -1,0 +1,61 @@
+COMPILING THE LIBRARY
+---------------------
+
+If you wish to develop on the library itself, you'll need to have CC65
+installed as detailed in README.txt.
+
+This library needs two directories of common files out of the cc65 distribution
+in order to compile:
+
+libsrc/common/
+libsrc/runtime/
+
+You can either copy those directories out of the cc65 source tree into the
+"upstream" directory, or if you have Subversion installed, you can execute
+"make getupstream" to grab them automatically out of upstream SVN.
+
+So after that is done, you should have something in this source tree that looks
+like:
+
+upstream/common/<a bunch of stuff>
+upstream/runtime/<a bunch of stuff>
+
+Then, you can build the library by typing "make".
+
+You can build the (as of yet not very functional) library test disk image by
+typing "make test".
+
+You can clean up all the scattered object files by typing "make clean".
+
+You can clean up everything for distribution archiving, svn checkin, or patch
+generation with "make distclean".
+
+
+FAQ:
+----
+
+Q: I made some awesome/trivial/cool/buggy/sweet/groovy changes/additions to the
+   code! Can you add my changes to the so-called official sources?!?
+A: Absolutely!  Use the "diff" utility to create a patch and email it to
+   leaf@dizzydragon.net .  I'm not a licensing fiend, but I don't want anyone
+   to get into trouble, so please note that the library is under the zLib
+   license, so any additions ought to be, too.  IANAL, but if you don't want to
+   deal with all that mumbo-jumbo, just put "dood! This is released under the
+   zLib license" into the email and I'll put the appropriate headers and stuff
+   in your sources for you, if you haven't already.
+
+Q: You didn't apply my patch to the source tree?!?  WTFBBQ!?!1one
+A: Don't take it personally!! If you haven't gotten an email from me about it,
+   I probably haven't gotten a chance to look at it yet.  Also, if your code
+   implements functionality beyond what is appropriate for a runtime library,
+   I'll probably suggest that we make it a separate project of some sort.
+
+Q: Can I have SVN commit access?  Plzplzplzplzplzkkthxbbq?
+A: I don't want to sound like a dick or anything, but if I don't know you very
+   well, I'd prefer not. >_>  Chat me up on IRC, send me some patches,
+   be groovy, and once I'm sure that you're not a Scary Internet Person (or at
+   least not an uncool-sort of Scary Internet Person, as I happen to be rather
+   a Scary Internet Person myself), we can dig it!
+
+Q: ur a dik dood wtf
+A: Sadface!  But I strive to follow Wheaton's Axiom!

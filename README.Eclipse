@@ -1,0 +1,41 @@
+If you use the Eclipse IDE with the CDT installed to edit this code, please
+realize that Eclipse does not auto-build the project.  You'll need to keep
+a terminal window open to run Make as you work.  If you want to fix that,
+please feel free, but please try to make sure that folks who choose not to use
+Eclipse aren't left out if it's something you'll be checking into svn!
+
+You'll also need to set up a couple of things to define the cc65 include path
+and define some cc65 symbols, to keep Eclipse from flagging errors and warnings
+that aren't really there.
+
+CDT stores its configuration in a file named ".cproject".  This file is set to
+be ignored by SVN, because it typically contains absolute pathnames that will
+vary from system to system, depending on where you have installed cc65.
+
+There is, however, a file included called "dot-cproject".  Copy (don't rename,
+just copy) it to ".cproject".
+
+If you are using a Debian/Ubuntu/Mint Linux system and the cc65 .deb package
+available from http://www.dizzydragon.net/svn/cc65rpc8/BinaryPackages/ , then
+you're done.
+
+Otherwise, you'll need to set the path to the cc65 include directory.  To do
+this:
+
+1. Don't forget to copy "dot-cproject" to ".cproject" if you have not already
+    done so.  You may have to restart Eclipse to get it to pick up the settings.
+2. Right-click on the CC65-RPC8 project, and select "Properties".
+3. Under "C/C++ General", select "Paths and Symbols".
+4. Click on the "Includes" tab.
+5. Select "GNU C".
+6. You'll see an include path "/usr/lib/cc65/include".  Select it, press the
+    Edit button, and change it to point at your cc65 include directory.
+7. If it asks you if you want to rebuild the index, select OK.
+8. Press "Apply".
+9. Select the "Symbols" tab, and then select "GNU C".
+10. Make sure that "__AX__" and <FIXME: insert more symbols here> are defined.
+11. If it asks you if you want to rebuild the index, select OK.
+12. Press Apply, then close the window.
+
+The code will still compile just fine if you don't do any of this, but the
+Eclipse code verifier will be annoying.

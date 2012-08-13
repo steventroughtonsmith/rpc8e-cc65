@@ -1,0 +1,69 @@
+BUILDING RPC8e PROGRAMS IN C
+----------------------------
+
+There are two parts to a C environment: The compiler and the Runtime Library.
+
+The compiler emits binary code that runs on the target system.  The runtime
+library contains code that your code links to, so it can do things that
+are done in different ways on different architectures.  Such as printing text
+to the screen or reading input from the keyboard.
+
+This package only implements the RPC8e Runtime Library and Target Configuration
+for the excellent CC65 compiler suite.  CC65 can target many 6502 and related
+systems, including the Apple ][, Commodore 64, and NES.  But it does not have
+a runtime library for the RPC8.  That's what this is.
+
+Hopefully someday I'll get around to making a nice web page explaining how to
+set all this up.  Or make even a fancy Eclipse plugin that Just Works (tm).
+For now, you'll probably have to do a little head-scratching based on the
+information below.
+
+1. Compiler
+-----------
+
+So, the first thing you'll want to do is install CC65.  CC65 development
+happens at http://www.cc65.org , so you can read up on how it install it and
+download sources and binaries from there.  However, if you are running a
+Debian/Ubuntu/Mint Linux system, you may be able to find a prebuilt binary
+package of CC65 for your system at
+http://www.dizzydragon.net/svn/cc65rpc8/BinaryPackages/ .
+
+Once you've installed CC65, you'll probably want to read at least section 2 of
+the documentation at http://www.cc65.org/doc/ .  You might want to download
+VICE (a Commodore 64 emulator) and try writing some example code for it, to
+get the hang of using the cc65 toolchain, before delving into how to compile
+and link code using this external runtime library for the RPC8.
+
+2. Runtime Library / RPC8 Target
+--------------------------------
+
+That's what this is.
+
+The RPC8 libraries are not yet complete enough for me to submit them upstream
+for inclusion in the official CC65 distribution.  As such, CC65 does not have
+a builtin target for the RPC8.  Until this library gets submitted upstream,
+you'll want to use the "-t none --cpu 65816" flags and manually specify the
+rpc8e.lib file for linking.
+
+Like this:
+
+cl65 --cpu 65816 -Osir -g -T -t none -c -o test.o test.c
+ld65 -C rpc8e.cfg -m test.map -o test.img test.o rpc8e.lib
+
+After building your *.img file, you must pad it to a multiple of 128 bytes.
+Otherwise, the boot loader won't read the last sector from disk!  There is an
+ANSI C program included that will do this for you:
+
+./padimage test.img
+
+The padimage tool should compile just fine on pretty much any Unix-like OS
+(including MacOS) and on Windows with DJGPP (and probably Visual Studio, too).
+If you want to submit a precompiled padimage binary for inclusion in the
+repository, that would be awesome.  You can send it to leaf@dizzydragon.net .
+
+Once you have created the disk image, you can either run it on Bigfoot's
+emulator (FIXME: insert URL) or import it into MineCraft (FIXME: insert URL).
+
+If you are interested in developing/extending the runtime library itself,
+please see
+http://www.dizzydragon.net/svn/cc65rpc8/CC65-RPC8/README.LibraryDevelopment .

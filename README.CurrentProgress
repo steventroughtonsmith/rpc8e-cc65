@@ -1,0 +1,27 @@
+This library is under development...  As things develop, notes will be added
+here.
+
+
+Complete:
+---------
+
+cc65 target .cfg
+
+
+Currently implemented:
+----------------------
+
+partial (no scrolling) cputc (conio.h)
+
+
+Working on:
+-----------
+conio.h
+
+
+Needs done:
+-----------
+Pretty much everything!
+ - crt0.s need to probe available RAM and set the C P-stack size appropriately.
+ - mmu.s needs the rest of the MMU functions implemented.
+ - write.c needs implemented (for printf).
