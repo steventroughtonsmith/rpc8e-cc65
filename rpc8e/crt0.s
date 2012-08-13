@@ -84,6 +84,4 @@ _exit:		JSR	donelib		; Run destructors
 exitloop:	WAI
 			JMP exitloop
 
-xce:
-.byte $FB
 
