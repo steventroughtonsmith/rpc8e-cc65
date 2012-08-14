@@ -41,72 +41,61 @@ extern unsigned char getMappedRedbusDevice();
 extern void setMappedRedbusDevice(unsigned char);
 
 
-/* Clear the whole screen and put the cursor into the top left corner */
-void clrscr( void )
+void blit_shift(unsigned char sx, unsigned char sy, unsigned char dx, unsigned char dy, unsigned char width, unsigned char height)
 {
-	unsigned char a = 0x20; // ' ', blank character
+	// FIXME: Call MMU to the make sure screen is the enabled device......
 
-	unsigned char x;
-	unsigned char y;
+	POKE( 0x30a, dx);
+	POKE( 0x30b, dy);
+	
+	POKE( 0x308, sx );
+	POKE( 0x309, sy );
 
-	// reset the cursor to 0,0
-	
-	POKE( 0x301, 0 );
-	POKE( 0x302, 0 );
-	
-	// clear screen
-	
+	POKE( 0x30c, width );
+	POKE( 0x30d, height );
+
+	POKE( 0x307, 3 );		// blitter SHIFT command
+	while ( PEEK( 0x307 ) == 3 )
 	{
-		for (y = 0; y < 50 ; y++)
-		{
-			for (x = 0; x < 80 ; x++)
-			{
-				POKE( 0x300, y );
-				POKE( 0x310+x, a );
-			}			
-		}
+		// WAI
 	}
+	
 }
 
-void blit(unsigned char x, unsigned char y, unsigned char width, unsigned char height)
+void blit_fill(unsigned char x, unsigned char y, unsigned char width, unsigned char height, unsigned char fillchar)
 {
+	// FIXME: Call MMU to the make sure screen is the enabled device......
 	
-	// set blit mode to fill
-	POKE( 0x307, 1 );
+	POKE( 0x308, fillchar);
+	POKE( 0x30a, x);
+	POKE( 0x30b, y);
 	
+	POKE( 0x30c, width );
+	POKE( 0x30d, height );
 	
-	POKE( 0x308, x);
-	POKE( 0x309, y );
-	
-	POKE( 0x30C, width );
-	POKE( 0x30D, height );
-	
+	POKE( 0x307, 1);			// blitter FILL command
+	while ( PEEK( 0x307 ) == 1)
+	{
+		// WAI
+	}
+
 	// reset blit size to 0
 	
+	POKE( 0x300, 0 ); // set row to 0
 	POKE( 0x301, 0 );
 	POKE( 0x302, 0 );
 	
 }
 
+/* Clear the whole screen and put the cursor into the top left corner */
+void clrscr()
+{
+	blit_fill(0,0,80,50,0x20);
+	gotoxy(0,0);
+}
 
 /* Return true if there's a key waiting, return false if not */
-unsigned char kbhit( void )
-{
-	unsigned char BUFFSTART = PEEK(0x304);
-	unsigned char BUFFPOS = PEEK(0x305);
-	
-	if (BUFFSTART != BUFFPOS)
-	{
-		if (1)//BUFFSTART+1 != 0x10)
-		{
-			POKE(0x305, PEEK(0x304));
-
-			return 1;
-		}
-	}
-	
-	return 0;
-}
+#define kbhit() ( PEEK(0x304) != PEEK(0x305) )
 
 /* Set the cursor to the specified X position, leave the Y position untouched */
 void __fastcall__ gotox( unsigned char x ) // __fastcall__
@@ -119,6 +108,7 @@ void __fastcall__ gotox( unsigned char x ) // __fastcall__
 void __fastcall__ gotoy( unsigned char y )
 {
 	// FIXME: Call MMU to the make sure screen is the enabled device......
+	POKE( 0x300, y );	// also set row
 	POKE( 0x302, y );
 }
 
@@ -126,6 +116,7 @@ void __fastcall__ gotoy( unsigned char y )
 void __fastcall__ gotoxy( unsigned char x, unsigned char y ) //
 {
 	// FIXME: Call MMU to the make sure screen is the enabled device......
+	POKE( 0x300, y );	// also set row
 	POKE( 0x301, x );
 	POKE( 0x302, y );
 }
@@ -149,6 +140,7 @@ void __fastcall__ cputc( char c )
 {
 	unsigned char x;
 	unsigned char y;
+	unsigned char i;
 	
 	// FIXME: Call MMU to the make sure screen is the enabled device......
 	
@@ -162,9 +154,11 @@ void __fastcall__ cputc( char c )
 	
 	// Set the display memory window to the line the cursor is on.
 	POKE( 0x300, y );
+
 	// Write the character the the column the cursor is in, within the display
 	//	memory window.
-	POKE( 0x310+x, c );
+	if ( c != '\n')
+		POKE( 0x310+x, c );
 	
 	// Advance the cursor, moving to the next line and scrolling the screen
 	//	if needed.
@@ -172,17 +166,25 @@ void __fastcall__ cputc( char c )
 	if( x > 79 || c == '\n' )
 	{
 		x = 0;
-		++y;
-		if( y > 49 )
+		if( y >= 49 )
 		{
-			// FIXME: Scroll... ??? The blitter can do this...
-			y = 49; // Write back over the bottom row for now...
+			// Scroll...
+			blit_shift(0,1,0,0,80,49);
+
+			for (i = 0; i<80; i++)
+				POKE( 0x310 + i, 0x20 );
+				
+		}
+		else
+		{	// no need to set if Y was 49. 
+			++y;
+			POKE( 0x302, y );
+			POKE( 0x300, y );	// set row too
 		}
 	}
 	
 	// Set the cursor to the new position.
 	POKE( 0x301, x );
-	POKE( 0x302, y );
 }
 
 /* Same as "gotoxy (x, y); cputc (c);" */
@@ -196,24 +198,10 @@ void __fastcall__ cputcxy( unsigned char x, unsigned char y, char c )
 /* Output a NUL-terminated string at the current cursor position */
 void __fastcall__ cputs( const char* s )
 {
-	
-	unsigned short i = 0;
-	unsigned char c = *(s+i);
-	
-	unsigned char x;
-	unsigned char y;
-	x = PEEK( 0x301 );
-	y = PEEK( 0x302 );
-	
-	while( c != 0 )
+
+	while( *(unsigned char *)(s) != 0 )
 	{
-		if (c != '\n')
-			cputc( c );
-		else
-			gotoxy(0, y+1);
-		
-		++i;
-		c = *(s+i);
+		cputc( *(unsigned char *)s++ );
 	}
 	
 }
@@ -246,10 +234,20 @@ void __fastcall__ cputsxy( unsigned char x, unsigned char y, const char* s )
  */
 char cgetc( void )
 {
-		
-	unsigned char key = PEEK(0x306);
-	
+        unsigned char key;
+	unsigned char pos;
 
+	while (!kbhit())
+	{
+		// WAI
+	}
+
+	key = PEEK(0x306);
+	pos = PEEK(0x304)+1;
+	if (pos > 0x10)
+		pos = 0;
+	POKE(0x304,pos);
+	
 	return key;
 }
 
