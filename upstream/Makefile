@@ -27,8 +27,8 @@ getupstream:
 	
 .PHONY: clean
 clean:
-	if -e common; then make -C common zap; fi
-	if -e common; then make -C runtime zap; fi
+	make -C common zap
+	make -C runtime zap
 	
 .PHONY: distclean
 distclean:

@@ -19,7 +19,7 @@ padimage:
 .PHONY: test
 test: all padimage
 	cl65 --cpu 65816 -Osir -g -T -t none -c -o test.o test/test.c
-	ld65 -o test.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test.o rpc8e.lib
+	ld65 -o test.img --define __STACKSIZE__="$$200" -C rpc8e.cfg -m test.map  test.o rpc8e.lib
 	rm test.o
 	./padimage test.img
 
