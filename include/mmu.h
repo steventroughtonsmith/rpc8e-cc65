@@ -32,10 +32,12 @@ void __fastcall__ setMappedRedbusDevice( unsigned char deviceId ); // Should thi
 unsigned char getMappedRedbusDevice( void ); // Should this be unsigned short??
 void __fastcall__ setRedbusWindowOffset( unsigned char offset ); // Should this be void* or unsigned short??
 unsigned char getRedbusWindowOffset( void ); // Should this be void* or unsigned short??
-void enableRedbus( void )
-void disableRedbus( void )
+void enableRedbus( void );
+void disableRedbus( void );
 void __fastcall__ setMemoryMappedWindow( unsigned char offset ); // Should this be void* or unsigned short??
 unsigned char getMemoryMappedWindow( void ); // Should this be void* or unsigned short??
+void enableExternalMemoryMappedWindow( void );
+void disableExternalMemoryMappedWindow( void );
 void __fastcall__ setBrkAddress( void (*fcnAddr)(void) );
 void (*getBrkAddress(void))( void );
 void __fastcall__ setPorAddress( void (*fcnAddr)(void) );

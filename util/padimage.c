@@ -3,6 +3,11 @@
 
 int main( int argc, char **argv )
 {
+	if ( argv[1] == 0 ) {
+		printf( "Usage: %s [file]\n", argv[0] );
+		return 0;
+	}
+
 	printf( "Padding %s... ", argv[1] );
 	FILE *f = NULL;
 	int b = 0;

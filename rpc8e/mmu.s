@@ -35,7 +35,8 @@
 
 .export _setMappedRedbusDevice, _getMappedRedbusDevice, _setRedbusWindowOffset, _getRedbusWindowOffset
 .export _enableRedbus, _disableRedbus, _setMemoryMappedWindow, _getMemoryMappedWindow
-.export _setBrkAddress, _getBrkAddress, _setPorAddress, _getPorAddress, _logRegisterA
+.export _enableExternalMemoryMappedWindow, _disableExternalMemoryMappedWindow, _setBrkAddress, _getBrkAddress
+.export _setPorAddress, _getPorAddress, _logRegisterA
 
 .segment "CODE"
 
@@ -83,6 +84,16 @@
 .proc _getMemoryMappedWindow: near
 	.byte $EF
 	.byte $83
+.endproc
+
+.proc _enableExternalMemoryMappedWindow: near
+	.byte $EF
+	.byte $04
+.endproc
+
+.proc _disableExternalMemoryMappedWindow: near
+	.byte $EF
+	.byte $84
 .endproc
 
 .proc _setBrkAddress: near
