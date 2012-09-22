@@ -29,7 +29,7 @@
 
 #include "_scanf.h"
 
-//extern void __fastcall__ _seterrno (unsigned char code);
+extern void __fastcall__ _seterrno (unsigned char code);
 
 #pragma staticlocals(on)
 
