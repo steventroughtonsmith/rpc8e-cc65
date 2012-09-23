@@ -5,7 +5,7 @@ int main( int argc, char **argv )
 {
 	if ( argv[1] == 0 ) {
 		printf( "Usage: %s [file]\n", argv[0] );
-		return 0;
+		return 1;
 	}
 
 	printf( "Padding %s... ", argv[1] );
