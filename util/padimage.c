@@ -14,7 +14,7 @@ int main( int argc, char **argv )
 	char *zerobuf;
 
 	f = fopen( argv[1], "a+" );
-	if ( if == NULL ) {
+	if ( f == NULL ) {
 		printf( "Failed to open image file\n" );
 		return 1;
 	}
