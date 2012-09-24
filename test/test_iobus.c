@@ -12,7 +12,7 @@
 #include <conio.h>
 
 // To use an I/O extender, include these headers
-#include <mmu.h>
+//#include <mmu.h>
 #include <peekpoke.h>
 
 // These are the colored wires and their associated bitwise values.
@@ -46,6 +46,20 @@ static char wai_fn[] = {
 // FIXME: Needed for now, remove when defined elsewhere.
 #define kbhit() ( PEEK(0x304) != PEEK(0x305) )
 
+// There's probably a better way to do this, but you get the idea here. Each WAI
+// halts until the next game tick.
+#define WAIT_HALFSEC() \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn); \
+	__asm__ ("jsr %v", wai_fn);
+
 int main() {
 	int i = 1;
 	int reg = 0x302;
@@ -58,38 +72,38 @@ int main() {
 	for (;;) {
 		POKE(0x303,0x0000);
 		POKE(0x302,0x0001);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0002);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0004);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0008);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0010);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0020);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0040);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0080);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x302,0x0000);
 		POKE(0x303,0x0001);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0002);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0004);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0008);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0010);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0020);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0040);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 		POKE(0x303,0x0080);
-		__asm__ ("jsr %v", wai_fn);
+		WAIT_HALFSEC();
 	}
 	// for (;;) {
 		// POKE(reg,i);
