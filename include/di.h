@@ -19,7 +19,7 @@
 //  if offset is 0, the iface becomes "deinitialized."
 // returns: 0 on success, 1 on failure
 // NOTE: Currently doesn't ever fail detectably
-int di_init ( int offset );
+int di_init ( void *offset );
 
 // di_read(): Read a sector from the disk
 //  sec: sector number to read
@@ -34,9 +34,9 @@ int di_write ( int sec );
 // di_setbuf(): Set the memory buffer for reading/writing
 //  buf: pointer to memory for buffering. If 0, no buffer copying will be done.
 // NOTE: The buffer needs to be at least 0x80 (128) bytes in size.
-void di_setbuf ( uintptr_t buf );
+void di_setbuf ( void *buf );
 
 // di_getbuf(): Returns the current pointer to the disk buffer
-uintptr_t di_getbuf ( void );
+void *di_getbuf ( void );
 
 #endif // _DI_H

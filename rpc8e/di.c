@@ -4,25 +4,24 @@
 // TODO: Emit error codes such as DI_DRIVE_NOT_READY
 
 #include <stdint.h>
-#include <di.h>
 
 // Drive interface ready indicator
-uint8_t   di_rdy       = 0;
+uint8_t di_rdy       = 0;
 
 // Drive iface offset in memory, needs to be set before using
-uintptr_t di_offset    = 0x0;
-#define   di_window di_offset
+void   *di_offset    = 0x0;
+#define di_window di_offset
 
 // External memory buffer indicator
-uint8_t   di_useextbuf = 0;
+uint8_t di_useextbuf = 0;
 
 // Memory buffer to read/write data
-uintptr_t di_buf       = 0x0;
+uint8_t di_buf       = 0x0;
 
 // Convenience macros
-#define DI_BUFFER  di_offset
-#define DI_SECTOR  di_offset[0x80]
-#define DI_COMMAND di_offset[0x82]
+#define DI_BUFFER  ((uint8_t *)di_offset)
+#define DI_SECTOR  ((uint8_t *)di_offset)[0x80]
+#define DI_COMMAND ((uint8_t *)di_offset)[0x82]
 
 #define DI_CMD_READ_DISK_NAME    1
 #define DI_CMD_WRITE_DISK_NAME   2
@@ -33,7 +32,7 @@ uintptr_t di_buf       = 0x0;
 #define DI_STATUS_READY          0
 #define DI_STATUS_FAILURE        0xFF
 
-int di_init ( int offset ) {
+int di_init ( void *offset ) {
 	if (offset == 0)
 		di_rdy = 0;
 	else {
@@ -54,7 +53,8 @@ int di_read ( int sec ) {
 	DI_COMMAND = DI_CMD_READ_DISK_SECTOR;
 
 	// Wait for the drive to complete
-	while (DI_COMMAND == DI_CMD_READ_DISK_SECTOR) do {}
+	// FIXME: a while block would do better here.
+	for (;;) if (DI_COMMAND == DI_CMD_READ_DISK_SECTOR) break;
 
 	if (DI_COMMAND == DI_STATUS_FAILURE)
 		return 2;
@@ -62,7 +62,7 @@ int di_read ( int sec ) {
 	// Copy the data out after reading
 	if (di_useextbuf) {
 		for (i = 0; i < 0x80; i++)
-			di_buf[i] = DI_WINDOW[i];
+			di_buf[i] = DI_BUFFER[i];
 	}
 
 	return 0;
@@ -77,7 +77,7 @@ int di_write ( int sec ) {
 	// Copy the data in before writing
 	if (di_useextbuf) {
 		for (i = 0; i < 0x80; i++)
-			DI_WINDOW[i] = di_buf[i];
+			DI_BUFFER[i] = di_buf[i];
 	}
 
 	// FIXME: is this right? MSB needs to be in 0x81
@@ -85,7 +85,8 @@ int di_write ( int sec ) {
 	DI_COMMAND = DI_CMD_WRITE_DISK_SECTOR;
 
 	// Wait for the drive to complete
-	while (DI_COMMAND == DI_CMD_WRITE_DISK_SECTOR) do {}
+	// FIXME: a while block would do better here.
+	for (;;) if (DI_COMMAND == DI_CMD_WRITE_DISK_SECTOR) break;
 
 	if (DI_COMMAND == DI_STATUS_FAILURE)
 		return 2;
@@ -93,7 +94,7 @@ int di_write ( int sec ) {
 	return 0;
 }
 
-void di_setbuf ( uintptr_t buf ) {
+void di_setbuf ( void *buf ) {
 	if (buf == 0) { 
 		di_buf = di_offset;
 		di_useextbuf = 0;
@@ -104,6 +105,6 @@ void di_setbuf ( uintptr_t buf ) {
 	}
 }
 
-uintptr_t di_getbuf ( void ) {
+void *di_getbuf ( void ) {
 	return di_buf;
 }
