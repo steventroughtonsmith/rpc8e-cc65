@@ -16,7 +16,7 @@ void   *di_offset    = 0x0;
 uint8_t di_useextbuf = 0;
 
 // Memory buffer to read/write data
-uint8_t di_buf       = 0x0;
+void   *di_buf       = 0x0;
 
 // Convenience macros
 #define DI_BUFFER  ((uint8_t *)di_offset)
@@ -62,7 +62,7 @@ int di_read ( int sec ) {
 	// Copy the data out after reading
 	if (di_useextbuf) {
 		for (i = 0; i < 0x80; i++)
-			di_buf[i] = DI_BUFFER[i];
+			((uint8_t*)di_buf)[i] = DI_BUFFER[i];
 	}
 
 	return 0;
@@ -77,7 +77,7 @@ int di_write ( int sec ) {
 	// Copy the data in before writing
 	if (di_useextbuf) {
 		for (i = 0; i < 0x80; i++)
-			DI_BUFFER[i] = di_buf[i];
+			DI_BUFFER[i] = ((uint8_t*)di_buf)[i];
 	}
 
 	// FIXME: is this right? MSB needs to be in 0x81
