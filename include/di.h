@@ -24,12 +24,12 @@ int di_init ( void *offset );
 // di_read(): Read a sector from the disk
 //  sec: sector number to read
 // returns: 1 on drive not ready, 2 on read failure, else 0
-int di_read ( int sec );
+int di_read ( uint16_t sec );
 
 // di_write(): Write a sector to the disk
 //  sec: sector number to read
 // returns: 1 on drive not ready, 2 on write failure, else 0
-int di_write ( int sec );
+int di_write ( uint16_t sec );
 
 // di_setbuf(): Set the memory buffer for reading/writing
 //  buf: pointer to memory for buffering. If 0, no buffer copying will be done.
