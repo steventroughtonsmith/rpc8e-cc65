@@ -25,7 +25,17 @@
 //  L. Adamson leaf@dizzydragon.net
 //
 
-int write ( int fd, const void* buf, unsigned count )
+#include <conio.h>
+
+int __fastcall__ write ( int fd, const void* buf, unsigned count )
 {
-	return 0;
+    unsigned i = 0;
+	char *cbuf = (char *) buf;
+
+    while (i < count) {
+        cputc(cbuf[i]);
+        i = i + 1;
+    }
+
+    return count;
 }
