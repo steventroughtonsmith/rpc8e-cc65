@@ -10,7 +10,7 @@ library:
 
 .PHONY:	package
 package: library padimage
-	tar --transform "s,^,cc65-rpc8_$$(git rev-list --max-count=1 HEAD)/,S" -cjf cc65-rpc8_$$(git rev-list --max-count=1 HEAD).tar.bz2 padimage.c padimage rpc8e.cfg rpc8e.lib
+	tar --transform "s,^,cc65-rpc8_$$(git rev-list --max-count=1 HEAD)/,S" -cjf cc65-rpc8_$$(git rev-list --max-count=1 HEAD).tar.bz2 util/padimage.c padimage rpc8e.cfg rpc8e.lib
 
 .PHONY: padimage
 padimage:
