@@ -21,7 +21,8 @@ CFLAGS	= --cpu 65816 -Osir -g -T -t none
 C_OBJS =		conio.o			\
 				write.o			\
 				io.o            \
-				di.o
+				di.o            \
+				dio.o
 
 S_OBJS  =       crt0.o          \
                 ctype.o			\
