@@ -2,7 +2,17 @@
 // an implementation of cc65's DIO interface
 
 #include <string.h>
-#include <mmu.h>
+#include <dio.h>
+#include <stdint.h>
+#include "../include/mmu.h"
+
+void __fastcall__ setMappedRedbusDevice( unsigned char deviceId );
+unsigned char getMappedRedbusDevice( void );
+unsigned char getRedbusWindowOffset( void );
+
+struct __dhandle_t {
+	uint8_t id; // Drive ID
+};
 
 // Convenience macros
 //#define DI_EXTBUF  ((uint8_t *)di_externalbuf)
@@ -22,7 +32,7 @@
 
 #define RB_PROLOGUE() \
 	unsigned char old_device_id = getMappedRedbusDevice(); \
-	void *rbw_offset = (getRedbusWindowOffset()<<8); \
+	void *rbw_offset = (void*)(getRedbusWindowOffset()<<8); \
 	setMappedRedbusDevice(drive_id);
 
 #define RB_EPILOGUE() \
@@ -65,19 +75,19 @@ dhandle_t __fastcall__ dio_open (driveid_t drive_id) {
 	while (DI_COMMAND == DI_CMD_READ_DISK_SERIAL) continue;
 	status = DI_COMMAND;
 
-	RB_EPOLOGUE();
+	RB_EPILOGUE();
 
 	// Act
 	switch (status) {
-		case DI_STATUS_FAILURE:
-			return -1;
 		case DI_STATUS_SUCCESS:
 			return (dhandle_t)drive_id;
+		case DI_STATUS_FAILURE:
+			return (dhandle_t)NULL;
 		default:
-			return -1;
+			return (dhandle_t)NULL;
 	}
 
-	return -1;
+	return (dhandle_t)NULL;
 }
 
 // Nothing needs to be done.
@@ -168,15 +178,15 @@ unsigned char __fastcall__ dio_write_verify(dhandle_t handle, sectnum_t sect_num
 
 
 unsigned char __fastcall__ dio_phys_to_log(dhandle_t handle, const dio_phys_pos *physpos, sectnum_t *sectnum) {
-	sectnum = dio_phys_pos.sector;
+	sectnum = physpos.sector;
 
 	return 0;
 }
 
 unsigned char __fastcall__ dio_log_to_phys(dhandle_t handle, const sectnum_t *sectnum, dio_phys_pos *physpos) {
-	dio_phys_pos.head   = 0;
-	dio_phys_pos.track  = 0;
-	dio_phys_pos.sector = sectnum;
+	physpos.head   = 0;
+	physpos.track  = 0;
+	physpos.sector = sectnum;
 
 	return 0;
 }

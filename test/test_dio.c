@@ -12,14 +12,21 @@
 #include <conio.h>
 #include <dio.h>
 #include <string.h>
+#include <peekpoke.h>
+#include "include/mmu.h"
+
+extern void setMappedRedbusDevice(unsigned char);
+extern void enableRedbus();
 
 #define kbhit() ( PEEK(0x304) != PEEK(0x305) )
 
+dhandle_t handle;
+
+char testbufa[0x80];
+char testbufb[0x80];
+
 int main() {
-	dhandle_t handle;
-	int       status;
-	char      testbufa[0x80];
-	char      testbufb[0x80];
+	int status;
 
 	enableRedbus();
 	setMappedRedbusDevice(1);
@@ -48,7 +55,7 @@ int main() {
 	if (status != 0) {
 		cputs("failed!\n");
 		return 1;
-	} else if (memcmp(testbufa,testbufb,0x80) != 0)
+	} else if (memcmp(testbufa,testbufb,0x80) != 0) {
 		cputs("cmp failed!\n");
 		return 1;
 	}
