@@ -38,7 +38,7 @@ testsuite: test
 clean:
 	make -C rpc8e clean
 	make -C upstream clean
-	rm test.map test.img || true
+	rm test.map test.img test_dio.map test_dio.img test_iobus.map test_iobus.img || true
 
 .PHONY: distclean
 distclean:
