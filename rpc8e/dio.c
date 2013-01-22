@@ -4,11 +4,14 @@
 #include <string.h>
 #include <dio.h>
 #include <stdint.h>
+#include <errno.h>
 #include "../include/mmu.h"
+#include <conio.h>
 
 void __fastcall__ setMappedRedbusDevice( unsigned char deviceId );
 unsigned char getMappedRedbusDevice( void );
 unsigned char getRedbusWindowOffset( void );
+extern void __fastcall__ _seterrno (unsigned char code);
 
 struct __dhandle_t {
 	uint8_t id; // Drive ID
@@ -30,13 +33,20 @@ struct __dhandle_t {
 #define DI_STATUS_SUCCESS        0
 #define DI_STATUS_FAILURE        0xFF
 
+// errno.h doesn't have EOK so I just add it here.
+#define	EOK 0
+
 #define RB_PROLOGUE() \
 	unsigned char old_device_id = getMappedRedbusDevice(); \
 	void *rbw_offset = (void*)(getRedbusWindowOffset()<<8); \
-	setMappedRedbusDevice(drive_id);
+	setMappedRedbusDevice(drive_id)
 
 #define RB_EPILOGUE() \
-	setMappedRedbusDevice(old_device_id);
+	setMappedRedbusDevice(old_device_id)
+
+#define DONE(val) \
+	_seterrno(val); \
+	return val
 
 // Notes:
 
@@ -78,21 +88,27 @@ dhandle_t __fastcall__ dio_open (driveid_t drive_id) {
 	RB_EPILOGUE();
 
 	// Act
+	// FIXME: os error codes should be set to what is most appropriate
 	switch (status) {
 		case DI_STATUS_SUCCESS:
+			_seterrno(EOK);
 			return (dhandle_t)drive_id;
 		case DI_STATUS_FAILURE:
+			_seterrno(EIO);
 			return (dhandle_t)NULL;
 		default:
+			_seterrno(ENODEV);
 			return (dhandle_t)NULL;
 	}
 
+	// It should never get here, but let's handle it anyway.
+	_seterrno(EUNKNOWN);
 	return (dhandle_t)NULL;
 }
 
 // Nothing needs to be done.
 unsigned char __fastcall__ dio_close (dhandle_t handle) {
-	return 0;
+	DONE(EOK);
 }
 
 // Read a sector into a buffer
@@ -104,7 +120,7 @@ unsigned char __fastcall__ dio_read(dhandle_t handle, sectnum_t sect_num, void *
 
 	if (DI_COMMAND != DI_STATUS_READY) {
 		RB_EPILOGUE();
-		return -1;
+		DONE(EAGAIN);
 	}
 
 	DI_SECTOR = sect_num;
@@ -116,15 +132,16 @@ unsigned char __fastcall__ dio_read(dhandle_t handle, sectnum_t sect_num, void *
 
 	switch (status) {
 		case DI_STATUS_FAILURE:
-			return -1;
+			DONE(EIO);
 		case DI_STATUS_SUCCESS:
 			memcpy(buffer, DI_BUFFER, 0x80);
-			return 0;
+			DONE(EOK);
 		default:
-			return -1;
+			DONE(EUNKNOWN);
 	}
 
-	return -1;
+	// It should never get here, but let's handle it anyway.
+	DONE(EUNKNOWN);
 }
 
 unsigned char __fastcall__ dio_write(dhandle_t handle, sectnum_t sect_num, const void *buffer) {
@@ -135,7 +152,7 @@ unsigned char __fastcall__ dio_write(dhandle_t handle, sectnum_t sect_num, const
 
 	if (DI_COMMAND != DI_STATUS_READY) {
 		RB_EPILOGUE();
-		return -1;
+		DONE(EAGAIN);
 	}
 
 	memcpy(DI_BUFFER, buffer, 0x80);
@@ -148,45 +165,49 @@ unsigned char __fastcall__ dio_write(dhandle_t handle, sectnum_t sect_num, const
 
 	switch (status) {
 		case DI_STATUS_FAILURE:
-			return -1;
+			DONE(EIO);
 		case DI_STATUS_SUCCESS:
-			return 0;
+			DONE(EOK);
 		default:
-			return -1;
+			DONE(EUNKNOWN);
 	}
 
-	return -1;
+	// It should never get here, but let's handle it anyway.
+	DONE(EUNKNOWN);
 }
 
 unsigned char __fastcall__ dio_write_verify(dhandle_t handle, sectnum_t sect_num, const void *buffer) {
 	char temp_buf[0x80];
 
-	uint8_t status = dio_write(handle,sect_num,buffer);
-	if (status != 0)
+	unsigned char status = dio_write(handle,sect_num,buffer);
+	if (status != EOK)
 		return status;
 
 	status = dio_read(handle,sect_num,temp_buf);
-	if (status != 0)
+	if (status != EOK)
 		return status;
 
 	status = memcmp(buffer,temp_buf,0x80);
 	if (status != 0)
-		return -1;
+		DONE(EIO);
 
-	return 0;
+	return status;
 }
 
-
+// FIXME: Implement
 unsigned char __fastcall__ dio_phys_to_log(dhandle_t handle, const dio_phys_pos *physpos, sectnum_t *sectnum) {
-	sectnum = physpos.sector;
+	// sectnum = physpos.sector;
 
-	return 0;
+	// DONE(EOK);
+	DONE(ENOSYS);
 }
 
+// FIXME: Implement
 unsigned char __fastcall__ dio_log_to_phys(dhandle_t handle, const sectnum_t *sectnum, dio_phys_pos *physpos) {
-	physpos.head   = 0;
-	physpos.track  = 0;
-	physpos.sector = sectnum;
+	// physpos.head   = 0;
+	// physpos.track  = 0;
+	// physpos.sector = sectnum;
 
-	return 0;
+	// DONE(EOK);
+	DONE(ENOSYS);
 }

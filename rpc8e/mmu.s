@@ -56,11 +56,13 @@
 .proc _setRedbusWindowOffset: near
 	.byte $EF
 	.byte $01
+	rts
 .endproc
 
 .proc _getRedbusWindowOffset: near
 	.byte $EF
 	.byte $81
+	rts
 .endproc
 
 .proc _enableRedbus: near
@@ -84,41 +86,49 @@
 .proc _getMemoryMappedWindow: near
 	.byte $EF
 	.byte $83
+	rts
 .endproc
 
 .proc _enableExternalMemoryMappedWindow: near
 	.byte $EF
 	.byte $04
+	rts
 .endproc
 
 .proc _disableExternalMemoryMappedWindow: near
 	.byte $EF
 	.byte $84
+	rts
 .endproc
 
 .proc _setBrkAddress: near
 	.byte $EF
 	.byte $05
+	rts
 .endproc
 
 .proc _getBrkAddress: near
 	.byte $EF
 	.byte $85
+	rts
 .endproc
 
 .proc _setPorAddress: near
 	.byte $EF
 	.byte $06
+	rts
 .endproc
 
 .proc _getPorAddress: near
 	.byte $EF
 	.byte $86
+	rts
 .endproc
 
 .proc _logRegisterA: near
 	.byte $EF
 	.byte $FF
+	rts
 .endproc
 
 

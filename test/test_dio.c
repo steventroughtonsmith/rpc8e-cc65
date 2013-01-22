@@ -13,17 +13,20 @@
 #include <dio.h>
 #include <string.h>
 #include <peekpoke.h>
+#include <stdio.h>
 #include "include/mmu.h"
 
 extern void setMappedRedbusDevice(unsigned char);
+unsigned char getRedbusWindowOffset( void );
 extern void enableRedbus();
 
 #define kbhit() ( PEEK(0x304) != PEEK(0x305) )
 
 dhandle_t handle;
 
-char testbufa[0x80];
-char testbufb[0x80];
+unsigned char testbufa[0x80];
+unsigned char testbufb[0x80];
+unsigned char window_num[8];
 
 int main() {
 	int status;
@@ -33,6 +36,12 @@ int main() {
 
 	cputs("Disk test, insert a BLANK disk and press any key to begin\n");
 	while (!kbhit());
+
+	sprintf(window_num,"$%04X",getRedbusWindowOffset());
+	cputs("DEBUG: getRedbusWindowOffset(): ");
+	cputs(window_num);
+	cputs("\n");
+
 	cputs("Opening...");
 	handle = dio_open(2);
 	if (handle < 0) {

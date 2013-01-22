@@ -29,10 +29,10 @@ testsuite: test
 	ld65 -o test_iobus.img --define __STACKSIZE__="$$200" -C rpc8e.cfg -m test_iobus.map  test_iobus.o rpc8e.lib
 	rm test_iobus.o
 	./padimage test_iobus.img
-	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_malloc.o test/test_malloc.c
-	ld65 -o test_malloc.img --define __STACKSIZE__="$$200" -C rpc8e.cfg -m test_malloc.map  test_malloc.o rpc8e.lib
-	rm test_malloc.o
-	./padimage test_malloc.img
+	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_dio.o test/test_dio.c
+	ld65 -o test_dio.img --define __STACKSIZE__="$$200" -C rpc8e.cfg -m test_dio.map  test_dio.o rpc8e.lib
+	rm test_dio.o
+	./padimage test_dio.img
 
 .PHONY: clean
 clean:
