@@ -191,7 +191,7 @@ unsigned char __fastcall__ dio_write_verify(dhandle_t handle, sectnum_t sect_num
 		return status;
 
 	if (memcmp(temp_buf,buffer,0x80) != 0) {
-		DONE(ESPIPE);
+		DONE(EIO);
 	} else {
 		DONE(EOK);
 	}

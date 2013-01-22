@@ -14,6 +14,7 @@
 #include <string.h>
 #include <peekpoke.h>
 #include <stdio.h>
+#include <errno.h>
 #include "include/mmu.h"
 
 extern void setMappedRedbusDevice(unsigned char);
@@ -26,7 +27,7 @@ dhandle_t handle;
 
 unsigned char testbufa[0x80];
 unsigned char testbufb[0x80];
-unsigned char window_num[8];
+unsigned char cmpval[8];
 
 int main() {
 	int status;
@@ -37,11 +38,6 @@ int main() {
 	cputs("Disk test, insert a BLANK disk and press any key to begin\n");
 	while (!kbhit());
 
-	sprintf(window_num,"$%04X",getRedbusWindowOffset());
-	cputs("DEBUG: getRedbusWindowOffset(): ");
-	cputs(window_num);
-	cputs("\n");
-
 	cputs("Opening...");
 	handle = dio_open(2);
 	if (handle < 0) {
@@ -49,8 +45,8 @@ int main() {
 		return 1;
 	}
 
-	memset(testbufa,0xFF,0x80);
-	memset(testbufb,0x00,0x80);
+	memset(testbufa,0xAA,0x80);
+	memset(testbufb,0x55,0x80);
 
 	cputs("success, performing write...");
 	status = dio_write(handle,0,testbufa);
@@ -65,14 +61,36 @@ int main() {
 		cputs("failed!\n");
 		return 1;
 	} else if (memcmp(testbufa,testbufb,0x80) != 0) {
-		cputs("cmp failed!\n");
+		sprintf(cmpval,"%i",memcmp(testbufa,testbufb,0x80));
+		cputs("cmp failed, value was ");
+		cputs(cmpval);
+		cputs("\n");
 		return 1;
 	}
 
 	cputs("verify...");
-	status = dio_write_verify(handle,0,testbufb);
+	memset(testbufa,0x55,0x80);
+	status = dio_write_verify(handle,0,testbufa);
 	if (status != 0) {
-		cputs("failed!\n");
+		cputs("failed: ");
+		switch (status) {
+			case EIO:
+				cputs("EIO");
+				break;
+			case EAGAIN:
+				cputs("EAGAIN");
+				break;
+			case EUNKNOWN:
+				cputs("EUNKNOWN");
+				break;
+			default:
+				cputs("N/A (");
+				sprintf(cmpval,"%i",status);
+				cputs(cmpval);
+				cputs(")");
+				break;
+		}
+		cputs("\n");
 		return 1;
 	}
 
