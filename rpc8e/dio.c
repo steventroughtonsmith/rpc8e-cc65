@@ -1,6 +1,8 @@
 // dio.c
 // an implementation of cc65's DIO interface
 
+// TODO: Disallow multiple opens on a single drive
+
 #include <string.h>
 #include <dio.h>
 #include <stdint.h>
@@ -128,15 +130,16 @@ unsigned char __fastcall__ dio_read(dhandle_t handle, sectnum_t sect_num, void *
 	while (DI_COMMAND == DI_CMD_READ_DISK_SECTOR) continue;
 	status = DI_COMMAND;
 
-	RB_EPILOGUE();
-
 	switch (status) {
 		case DI_STATUS_FAILURE:
+			RB_EPILOGUE();
 			DONE(EIO);
 		case DI_STATUS_SUCCESS:
 			memcpy(buffer, DI_BUFFER, 0x80);
+			RB_EPILOGUE();
 			DONE(EOK);
 		default:
+			RB_EPILOGUE();
 			DONE(EUNKNOWN);
 	}
 
@@ -177,7 +180,7 @@ unsigned char __fastcall__ dio_write(dhandle_t handle, sectnum_t sect_num, const
 }
 
 unsigned char __fastcall__ dio_write_verify(dhandle_t handle, sectnum_t sect_num, const void *buffer) {
-	char temp_buf[0x80];
+	unsigned char temp_buf[0x80];
 
 	unsigned char status = dio_write(handle,sect_num,buffer);
 	if (status != EOK)
@@ -187,11 +190,11 @@ unsigned char __fastcall__ dio_write_verify(dhandle_t handle, sectnum_t sect_num
 	if (status != EOK)
 		return status;
 
-	status = memcmp(buffer,temp_buf,0x80);
-	if (status != 0)
-		DONE(EIO);
-
-	return status;
+	if (memcmp(temp_buf,buffer,0x80) != 0) {
+		DONE(ESPIPE);
+	} else {
+		DONE(EOK);
+	}
 }
 
 // FIXME: Implement
