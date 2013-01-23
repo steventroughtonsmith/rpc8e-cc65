@@ -62,7 +62,8 @@ If you want to submit a precompiled padimage binary for inclusion in the
 repository, that would be awesome.  You can send it to leaf@dizzydragon.net .
 
 Once you have created the disk image, you can either run it on Bigfoot's
-emulator (FIXME: insert URL) or import it into MineCraft (FIXME: insert URL).
+emulator (http://bigfootinformatika.hu/65el02/) or import it into MineCraft
+(FIXME: insert URL).
 
 If you are interested in developing/extending the runtime library itself,
 please see

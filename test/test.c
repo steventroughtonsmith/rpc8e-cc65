@@ -57,6 +57,10 @@ extern void disableRedbus();
 #define RedBusRed		16384
 #define RedBusBlack		32768
 
+// FIXME: kbhit() defined here because kbhit() isn't defined anywhere else.
+// make sure to remove this def of kbhit() if it's added later.
+#define kbhit() ( PEEK(0x304) != PEEK(0x305) )
+
 void setCursorMode(short mode)
 {
 	POKE( 0x303, mode );
