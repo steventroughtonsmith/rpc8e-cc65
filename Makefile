@@ -24,11 +24,19 @@ padimage:
 	gcc -O -o padimage util/padimage.c
 
 .PHONY: test
-test: all padimage
-	cl65 --cpu 65816 -Osir -g -T -t none -c -o test.o test/test.c
-	ld65 -o test.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test.o rpc8e.lib
-	$(RM) test.o
-	./padimage test.img
+test: all padimage test_loop test_printf
+
+test_loop:
+	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_loop.o test/test_loop.c
+	ld65 -o test_loop.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test_loop.o rpc8e.lib
+	$(RM) test_loop.o
+	./padimage test_loop.img
+
+test_printf:
+	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_printf.o test/test_printf.c
+	ld65 -o test_printf.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test_printf.o rpc8e.lib
+	$(RM) test_printf.o
+	./padimage test_printf.img
 
 .PHONY: clean
 clean:
