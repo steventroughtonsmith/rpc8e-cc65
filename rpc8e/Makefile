@@ -24,7 +24,8 @@ C_OBJS =		conio.o			\
 
 S_OBJS  =       crt0.o          \
                 ctype.o			\
-				mmu.o
+				mmu.o 			\
+				oserror.o
 
 .PHONY:	all clean distclean
 
