@@ -95,7 +95,9 @@ void clrscr()
 }
 
 /* Return true if there's a key waiting, return false if not */
-#define kbhit() ( PEEK(0x304) != PEEK(0x305) )
+unsigned char kbhit(void) {
+    return PEEK(0x304) != PEEK(0x305);
+}
 
 /* Set the cursor to the specified X position, leave the Y position untouched */
 void __fastcall__ gotox( unsigned char x ) // __fastcall__
