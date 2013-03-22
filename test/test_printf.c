@@ -30,7 +30,7 @@
 
 int main()
 {
-    int i;
+    unsigned int i;
 	POKE(0x302, 0); // set cursor y to 0
 	POKE(0x303, 1); // set cursor to solid
 	
@@ -42,10 +42,8 @@ int main()
     printf("Test wrapping with a very long string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
 	printf("Test scrolling:\n");
 
-    i = 1;
-    while (i < 100) {
-        printf("%d\n", i);
-        ++i;
+    for (i = 0; i < 100; i++){
+        printf("%u\n", i);
     }
 
     printf("Finished tests");
