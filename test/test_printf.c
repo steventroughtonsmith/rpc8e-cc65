@@ -40,12 +40,14 @@ int main()
     printf("Test with an integer: %d\n", 42);
     printf("Test with multiple integers: (%d, %d, %d, %d, %d)\n", 1, 2, 3, 5, 8);
     printf("Test wrapping with a very long string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+    printf("Test string: %s\n", "abcdefg");
 	printf("Test scrolling:\n");
 
     for (i = 0; i < 100; i++){
         printf("%u\n", i);
     }
 
-    printf("Finished tests");
+    printf("Finished tests\n");
+    printf("\n");
 	return 0;
 }
