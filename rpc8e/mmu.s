@@ -85,6 +85,16 @@
 	.byte $83
 .endproc
 
+.proc _enableMemoryMappedWindow: near
+    .byte $EF
+    .byte 04
+.endproc
+
+.proc _disableMemoryMappedWindow: near
+    .byte $EF
+    .byte 84
+.endproc
+
 .proc _setBrkAddress: near
 	.byte $EF
 	.byte $05
