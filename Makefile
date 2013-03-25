@@ -5,12 +5,25 @@ else
 endif
 export RM
 
-.PHONY:	all
-all: library
+OBJ_DIR = test
+SRC_DIR = test
+RP_CFG = rpc8e.cfg
+RP_MAP = test.map
+RP_LIB = rpc8e.lib
 
-.PHONY:	library
-library:
+TEST_IMGS = \
+	test_printf.img \
+	test_loop.img \
+	test_assert.img
+
+.PHONY:	all
+all: upstream rpc8e.lib
+
+.PHONY: upstream
+upstream:
 	$(MAKE) -C upstream
+
+rpc8e.lib: rpc8e
 	$(MAKE) -C rpc8e
 	$(RM) rpc8e.lib
 	ar65 a rpc8e.lib rpc8e/*.o upstream/common/*.o upstream/runtime/*.o
@@ -24,19 +37,14 @@ padimage:
 	gcc -O -o padimage util/padimage.c
 
 .PHONY: test
-test: all padimage test_loop test_printf
+test: all padimage $(TEST_IMGS)
 
-test_loop:
-	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_loop.o test/test_loop.c
-	ld65 -o test_loop.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test_loop.o rpc8e.lib
-	$(RM) test_loop.o
-	./padimage test_loop.img
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	cl65 --cpu 65816 -Osir -g -T -t none -c -o $@ $<
 
-test_printf:
-	cl65 --cpu 65816 -Osir -g -T -t none -c -o test_printf.o test/test_printf.c
-	ld65 -o test_printf.img --define __STACKSIZE__="$200" -C rpc8e.cfg -m test.map  test_printf.o rpc8e.lib
-	$(RM) test_printf.o
-	./padimage test_printf.img
+%.img: $(OBJ_DIR)/%.o
+	ld65 -o $@ --define __STACKSIZE__="$200" -C $(RP_CFG) -m $(RP_MAP) $< $(RP_LIB)
+	./padimage $@
 
 .PHONY: clean
 clean:
