@@ -14,7 +14,15 @@ RP_LIB = rpc8e.lib
 TEST_IMGS = \
 	test_printf.img \
 	test_loop.img \
-	test_assert.img
+	test_assert.img \
+	test_ctype.img \
+	test_errno.img \
+	test_limits.img \
+	test_locale.img \
+	test_setjmp.img \
+	test_signal.img \
+	test_stdarg.img \
+	test_stddef.img
 
 .PHONY:	all
 all: upstream rpc8e.lib
