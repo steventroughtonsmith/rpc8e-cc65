@@ -31,7 +31,7 @@ all: upstream rpc8e.lib
 upstream:
 	$(MAKE) -C upstream
 
-rpc8e.lib: rpc8e
+rpc8e.lib:
 	$(MAKE) -C rpc8e
 	$(RM) rpc8e.lib
 	ar65 a rpc8e.lib rpc8e/*.o upstream/common/*.o upstream/runtime/*.o
