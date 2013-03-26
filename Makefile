@@ -8,7 +8,7 @@ endif
 export RM
 
 CC = cl65
-CFLAGS = --cpu 65816 -Osir -g -T -t none -c
+CFLAGS = --cpu 65816 -Osir -g -T -t none -c -Iinclude
 
 AS = ca65
 AFLAGS = --cpu 65816 --verbose -t none -g
@@ -37,6 +37,7 @@ TEST_IMGS = \
 	test_loop.img \
 	test_assert.img \
 	test_ctype.img \
+	test_dio.img \
 	test_errno.img \
 	test_limits.img \
 	test_locale.img \

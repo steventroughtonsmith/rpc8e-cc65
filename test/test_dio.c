@@ -15,7 +15,7 @@
 #include <peekpoke.h>
 #include <stdio.h>
 #include <errno.h>
-#include "include/mmu.h"
+#include "mmu.h"
 
 extern void setMappedRedbusDevice(unsigned char);
 unsigned char getRedbusWindowOffset( void );
