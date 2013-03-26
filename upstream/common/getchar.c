@@ -17,7 +17,7 @@
 
 
 
-int  getchar (void)
+int __fastcall__ getchar (void)
 {
     return fgetc (stdin);
 }

@@ -59,10 +59,10 @@ _init:
 ; -----------------------------------------------------------------------------
 ; Set cc65 argument stack pointer.
 
-;			LDA	#<(__RAM_START__ + __RAM_SIZE__)
-;			STA	sp
-;			LDA	#>(__RAM_START__ + __RAM_SIZE__)
-;			STA	sp+1
+			LDA	#<(__RAM_START__ + __RAM_SIZE__)
+			STA	sp
+			LDA	#>(__RAM_START__ + __RAM_SIZE__)
+			STA	sp+1
 
 ; -----------------------------------------------------------------------------
 ; Initialize memory storage.

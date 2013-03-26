@@ -6,6 +6,8 @@ Complete:
 ---------
 
 cc65 target .cfg
+MMU wrapper functions
+DIO (Disk I/O) support
 
 
 Currently implemented:
@@ -23,5 +25,4 @@ Needs done:
 -----------
 Pretty much everything!
  - crt0.s need to probe available RAM and set the C P-stack size appropriately.
- - mmu.s needs the rest of the MMU functions implemented.
  - write.c needs implemented (for printf).

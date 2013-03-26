@@ -1,10 +1,10 @@
 // -----------------------------------------------------------------------------
-// write.c
+// test_printf.c
 //
-// write() for cc65-rpc8e
+// Barebones test main() for cc65-rpc8e
 // -----------------------------------------------------------------------------
 //
-// Copyright (C) 2012 L. Adamson
+// Copyright (C) 2013 E. Kern
 //
 //  This software is provided 'as-is', without any express or implied
 //  warranty.  In no event will the authors be held liable for any damages
@@ -22,21 +22,32 @@
 //     misrepresented as being the original software.
 //  3. This notice may not be removed or altered from any source distribution.
 //
-//  L. Adamson leaf@dizzydragon.net
-//
 
 #include <conio.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <peekpoke.h>
 
-int __fastcall__ write ( int fd, const void* buf, unsigned count )
+int main()
 {
-    unsigned i = 0;
-	char *cbuf = (char *) buf;
+    unsigned int i;
+	POKE(0x302, 0); // set cursor y to 0
+	POKE(0x303, 1); // set cursor to solid
+	
+	clrscr();
 
-    while (i < count) {
-        cputc(cbuf[i]);
-        i = i + 1;
+    printf("Test with no arguments\n");
+    printf("Test with an integer: %d\n", 42);
+    printf("Test with multiple integers: (%d, %d, %d, %d, %d)\n", 1, 2, 3, 5, 8);
+    printf("Test wrapping with a very long string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+    printf("Test string: %s\n", "abcdefg");
+	printf("Test scrolling:\n");
+
+    for (i = 0; i < 100; i++){
+        printf("%u\n", i);
     }
 
-    return count;
+    printf("Finished tests\n");
+    printf("\n");
+	return 0;
 }
