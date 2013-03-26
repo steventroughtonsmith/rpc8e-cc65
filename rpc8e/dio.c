@@ -13,7 +13,7 @@
 void __fastcall__ setMappedRedbusDevice( unsigned char deviceId );
 unsigned char getMappedRedbusDevice( void );
 unsigned char getRedbusWindowOffset( void );
-extern void __fastcall__ _seterrno (unsigned char code);
+extern unsigned char __fastcall__ _seterrno (unsigned char code);
 
 struct __dhandle_t {
 	uint8_t id; // Drive ID
