@@ -24,6 +24,7 @@ RP_SRC_DIR = rpc8e
 
 RP_OBJS = \
 	conio.o \
+	dio.o \
 	write.o \
 	io.o \
 	crt0.o \
