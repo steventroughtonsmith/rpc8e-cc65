@@ -2,3 +2,6 @@
 .directory
 *~
 dev/
+rpc8e/conio.s
+rpc8e/io.s
+rpc8e/write.s
